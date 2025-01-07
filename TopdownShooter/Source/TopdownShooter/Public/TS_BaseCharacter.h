@@ -15,6 +15,18 @@ public:
 	// Sets default values for this character's properties
 	ATS_BaseCharacter();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bDead;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Health;
+
+	UPROPERTY(EditAnywhere)
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere)
+	float WalkSpeed;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
