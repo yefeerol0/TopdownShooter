@@ -21,6 +21,20 @@ ATS_Avatar::ATS_Avatar()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void ATS_Avatar::TakeDamage()
+{
+	Health -= 10.0f;
+	if (Health <= 0) 
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		if (PlayerController)
+		{
+			PlayerController->CurrentMouseCursor = EMouseCursor::Default;
+		}
+		Lose();
+	}
+}
+
 void ATS_Avatar::BeginPlay()
 {
 	Super::BeginPlay();

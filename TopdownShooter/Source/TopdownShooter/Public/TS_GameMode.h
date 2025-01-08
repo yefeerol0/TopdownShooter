@@ -13,5 +13,15 @@ UCLASS()
 class TOPDOWNSHOOTER_API ATS_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Timer;
+
+	FTimerHandle CountdownTimerHandle;
+
+	virtual void BeginPlay() override;
+	void Countdown();
 	
 };

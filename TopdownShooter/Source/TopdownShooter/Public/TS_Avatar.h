@@ -34,6 +34,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 	ATS_Gun* EquippedGun;
 
+	UFUNCTION()
+	void TakeDamage();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Lose();
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
