@@ -12,6 +12,11 @@ ATS_EnemySpawner::ATS_EnemySpawner()
 	SpawnerLevel = ESpawnerLevel::NONE;
 }
 
+void ATS_EnemySpawner::Deactivate()
+{
+	Destroy();
+}
+
 void ATS_EnemySpawner::SpawnEnemyUnit()
 {
 	GetWorld()->SpawnActor<ATS_Enemy>(EnemyReference, GetActorLocation(), GetActorRotation());

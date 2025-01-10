@@ -6,6 +6,7 @@
 #include "TS_BaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "TS_Gun.h"
+#include "Sound/SoundCue.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TS_Avatar.generated.h"
@@ -34,6 +35,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 	ATS_Gun* EquippedGun;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* ShootingSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* BuySound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* DashSound;
+
+
 	FTimerHandle InvincibilityTimerHandle;
 	UPROPERTY()
 	bool bIsInvincible;
@@ -53,6 +64,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenShop();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BossUI();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bBossUIAdded;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int DashCharges = 1;
 
@@ -71,6 +88,18 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDualWieldUnlocked;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDoubleDashUnlocked;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAutoGunsUnlocked;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bHoldingShoot;
 
 private:
 
@@ -108,8 +137,5 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void GainAutoGuns();
 
-	bool bDualWieldUnlocked;
-	bool bDoubleDashUnlocked;
-	bool bAutoGunsUnlocked;
-	bool bHoldingShoot;
+
 };

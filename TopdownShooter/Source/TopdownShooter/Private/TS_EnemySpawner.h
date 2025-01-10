@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATS_Enemy> EnemyReference;
 
+	UFUNCTION(BlueprintCallable)
+	void Deactivate();
+
 	FTimerHandle SpawnUnitHandle;
 	void SpawnEnemyUnit();
 

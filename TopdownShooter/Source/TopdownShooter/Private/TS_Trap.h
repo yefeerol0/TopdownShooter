@@ -40,6 +40,9 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void SizeUp();
+
 	bool bTrapActive;
 
 protected:

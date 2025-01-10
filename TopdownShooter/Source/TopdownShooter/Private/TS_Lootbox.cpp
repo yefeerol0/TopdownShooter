@@ -3,6 +3,8 @@
 
 #include "TS_Lootbox.h"
 #include "TS_Avatar.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 ATS_Lootbox::ATS_Lootbox()
@@ -26,8 +28,9 @@ void ATS_Lootbox::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 		ATS_Avatar* Avatar = Cast<ATS_Avatar>(OtherActor);
 		if (LootboxType == ELootboxType::COIN)
 		{
-			int RandomCoin = FMath::RandRange(5, 10);
+			int RandomCoin = FMath::RandRange(7, 13);
 			Avatar->Coin += RandomCoin;
+			UGameplayStatics::PlaySoundAtLocation(this, CoinSound, GetActorLocation());
 		}
 		if (LootboxType == ELootboxType::HEALTH)
 		{
@@ -39,6 +42,7 @@ void ATS_Lootbox::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			{
 				Avatar->Health = Avatar->MaxHealth;
 			}
+			UGameplayStatics::PlaySoundAtLocation(this, HealSound, GetActorLocation());
 		}
 
 		Destroy();

@@ -9,7 +9,7 @@ ATS_Gun::ATS_Gun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gun Mesh"));
+	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	GunMesh->SetupAttachment(RootComponent);
 }

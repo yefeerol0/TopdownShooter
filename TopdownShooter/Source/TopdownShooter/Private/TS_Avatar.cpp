@@ -2,12 +2,13 @@
 
 
 #include "TS_Avatar.h"
+#include "Kismet/GameplayStatics.h"
 
 ATS_Avatar::ATS_Avatar()
 {
 	Health = 100.0f;
 	MaxHealth = 100.0f;
-	Coin = 200;
+	Coin = 20;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->TargetArmLength = 300.0f;
@@ -136,10 +137,12 @@ void ATS_Avatar::Shoot()
 		{
 			EquippedGun->SpawnProjectile();
 			SecondaryGun->SpawnProjectile();
+			UGameplayStatics::PlaySoundAtLocation(this, ShootingSound, GetActorLocation());
 		}
 		else if (bCanShoot && !bDualWieldUnlocked)
 		{
 			EquippedGun->SpawnProjectile();
+			UGameplayStatics::PlaySoundAtLocation(this, ShootingSound, GetActorLocation());
 		}
 	}
 	else
@@ -149,17 +152,20 @@ void ATS_Avatar::Shoot()
 			EquippedGun->SpawnProjectile();
 			SecondaryGun->SpawnProjectile();
 			GetWorld()->GetTimerManager().SetTimer(AutoShootHandle, this, &ATS_Avatar::Shoot, 0.2f, false);
+			UGameplayStatics::PlaySoundAtLocation(this, ShootingSound, GetActorLocation());
 		}
 		else if (bCanShoot && !bDualWieldUnlocked && bHoldingShoot)
 		{
 			EquippedGun->SpawnProjectile();
 			GetWorld()->GetTimerManager().SetTimer(AutoShootHandle, this, &ATS_Avatar::Shoot, 0.2f, false);
+			UGameplayStatics::PlaySoundAtLocation(this, ShootingSound, GetActorLocation());
 		}
 		else if (!bHoldingShoot)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(AutoShootHandle);
 		}
 	}
+	
 }
 
 void ATS_Avatar::Dash()
@@ -171,6 +177,7 @@ void ATS_Avatar::Dash()
 
 	bIsDashing = true;
 	DashCharges--;
+	UGameplayStatics::PlaySoundAtLocation(this, DashSound, GetActorLocation());
 	DashDirection = GetActorForwardVector();
 	FVector DashVelocity = DashDirection * (DashDistance / DashDuration);
 	LaunchCharacter(DashVelocity, true, true);
@@ -210,6 +217,7 @@ void ATS_Avatar::IncreaseMaxHealth()
 		Coin -= 10;
 		MaxHealth += 10.0f;
 		Health += 10.0f;
+		UGameplayStatics::PlaySoundAtLocation(this, BuySound, GetActorLocation());
 	}
 	else 
 	{
@@ -223,6 +231,7 @@ void ATS_Avatar::IncreaseMovementSpeed()
 	{
 		Coin -= 10;
 		GetCharacterMovement()->MaxWalkSpeed += 20.0f;
+		UGameplayStatics::PlaySoundAtLocation(this, BuySound, GetActorLocation());
 	}
 }
 
@@ -238,6 +247,7 @@ void ATS_Avatar::GainDualWield()
 			SecondaryGun->SetOwner(this);
 			bDualWieldUnlocked = true;
 			Coin -= 50;
+			UGameplayStatics::PlaySoundAtLocation(this, BuySound, GetActorLocation());
 		}
 	}
 }
@@ -250,6 +260,7 @@ void ATS_Avatar::GainDoubleDash()
 		MaxDashCharges++;
 		bDoubleDashUnlocked = true;
 		Coin -= 50;
+		UGameplayStatics::PlaySoundAtLocation(this, BuySound, GetActorLocation());
 	}
 }
 
@@ -259,5 +270,6 @@ void ATS_Avatar::GainAutoGuns()
 	{
 		bAutoGunsUnlocked = true;
 		Coin -= 50;
+		UGameplayStatics::PlaySoundAtLocation(this, BuySound, GetActorLocation());
 	}
 }

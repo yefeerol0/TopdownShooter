@@ -30,19 +30,15 @@ void ATS_Enemy::Tick(float DeltaTime)
 	FVector PlayerLocation = GetPlayerLocation();
 	FVector EnemyLocation = GetActorLocation();
 
-	// Calculate direction to the player
 	FVector Direction = (PlayerLocation - EnemyLocation).GetSafeNormal();
 
-	// Preserve the current Z position
 	Direction.Z = 0.0f;
 	Direction.Normalize();
 
-	// Update the enemy's location
 	FVector NewLocation = EnemyLocation + Direction * WalkSpeed * DeltaTime;
-	NewLocation.Z = EnemyLocation.Z; // Keep the original Z position
+	NewLocation.Z = EnemyLocation.Z; 
 	SetActorLocation(NewLocation);
 
-	// Rotate the enemy to face the moving direction
 	FRotator NewRotation = Direction.Rotation();
 	SetActorRotation(NewRotation);
 }
@@ -71,6 +67,7 @@ void ATS_Enemy::TakeDamage()
 			Avatar->Win();
 		}
 
+		DeathEffect();
 		Destroy();
 	
 	}
@@ -78,8 +75,8 @@ void ATS_Enemy::TakeDamage()
 
 void ATS_Enemy::SpawnLootOnDeath()
 {
-	int LootDropRatio = FMath::RandRange(1, 5);
-	if (LootDropRatio == 5)
+	int LootDropRatio = FMath::RandRange(1, 4);
+	if (LootDropRatio == 4)
 	{
 		GetWorld()->SpawnActor<ATS_Lootbox>(LootboxReference, GetActorLocation(), GetActorRotation());
 	}

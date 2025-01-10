@@ -12,7 +12,6 @@ class TOPDOWNSHOOTER_API ATS_BaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ATS_BaseCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

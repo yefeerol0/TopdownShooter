@@ -27,6 +27,13 @@ void ATS_Trap::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	}
 }
 
+void ATS_Trap::SizeUp()
+{
+	FVector CurrentScale = TrapMesh->GetComponentScale();
+	FVector NewScale = CurrentScale * 1.5f;               
+	TrapMesh->SetWorldScale3D(NewScale);
+}
+
 void ATS_Trap::TrapSignalTrigger()
 {
 	TrapMesh->SetHiddenInGame(false);

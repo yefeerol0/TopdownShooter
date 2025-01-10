@@ -18,7 +18,7 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* GunMesh;
+	USkeletalMeshComponent* GunMesh;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATS_Projectile> ProjectileReference;

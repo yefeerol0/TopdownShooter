@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATS_Lootbox> LootboxReference;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void DeathEffect();
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 

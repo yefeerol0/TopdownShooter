@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
+#include "Sound/SoundCue.h"
 #include "TS_Lootbox.generated.h"
 
 UENUM(BlueprintType)
@@ -39,6 +40,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterial* HealthMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* HealSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundCue* CoinSound;
 
 	UFUNCTION()
 	void BeginOverlap
