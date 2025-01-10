@@ -7,7 +7,7 @@ ATS_Avatar::ATS_Avatar()
 {
 	Health = 100.0f;
 	MaxHealth = 100.0f;
-
+	Coin = 200;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->TargetArmLength = 300.0f;
@@ -23,21 +23,42 @@ ATS_Avatar::ATS_Avatar()
 
 void ATS_Avatar::TakeDamage()
 {
-	Health -= 10.0f;
-	if (Health <= 0) 
+	if (!bIsInvincible)
 	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		if (PlayerController)
+		Health -= 10.0f;
+
+		if (Health <= 0)
 		{
-			PlayerController->CurrentMouseCursor = EMouseCursor::Default;
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			if (PlayerController)
+			{
+				PlayerController->CurrentMouseCursor = EMouseCursor::Default;
+			}
+			Lose();
 		}
-		Lose();
+
+		bIsInvincible = true;
+		GWorld->GetTimerManager().SetTimer(InvincibilityTimerHandle, this, &ATS_Avatar::ResetInvincibility, 1.5f, false);
 	}
+	else 
+	{
+		return;
+	}
+}
+
+void ATS_Avatar::ResetInvincibility()
+{
+	bIsInvincible = false;
 }
 
 void ATS_Avatar::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bIsDashing = false;
+	DashDistance = 1000.0f;
+	DashDuration = 0.2f;
+
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
 	{
@@ -84,6 +105,9 @@ void ATS_Avatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis("MoveRight", this, &ATS_Avatar::MoveRight);
 
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ATS_Avatar::Shoot);
+	PlayerInputComponent->BindAction("Shoot", IE_Released, this, &ATS_Avatar::StopShooting);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ATS_Avatar::Dash);
+	PlayerInputComponent->BindAction("Shop", IE_Pressed, this, &ATS_Avatar::OpenShop);
 }
 
 void ATS_Avatar::MoveForward(float value)
@@ -104,5 +128,136 @@ void ATS_Avatar::MoveRight(float value)
 
 void ATS_Avatar::Shoot()
 {
-	EquippedGun->SpawnProjectile();
+	bHoldingShoot = true;
+
+	if (!bAutoGunsUnlocked)
+	{
+		if (bCanShoot && bDualWieldUnlocked)
+		{
+			EquippedGun->SpawnProjectile();
+			SecondaryGun->SpawnProjectile();
+		}
+		else if (bCanShoot && !bDualWieldUnlocked)
+		{
+			EquippedGun->SpawnProjectile();
+		}
+	}
+	else
+	{
+		if (bCanShoot && bDualWieldUnlocked && bHoldingShoot)
+		{
+			EquippedGun->SpawnProjectile();
+			SecondaryGun->SpawnProjectile();
+			GetWorld()->GetTimerManager().SetTimer(AutoShootHandle, this, &ATS_Avatar::Shoot, 0.2f, false);
+		}
+		else if (bCanShoot && !bDualWieldUnlocked && bHoldingShoot)
+		{
+			EquippedGun->SpawnProjectile();
+			GetWorld()->GetTimerManager().SetTimer(AutoShootHandle, this, &ATS_Avatar::Shoot, 0.2f, false);
+		}
+		else if (!bHoldingShoot)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(AutoShootHandle);
+		}
+	}
+}
+
+void ATS_Avatar::Dash()
+{
+	if (DashCharges <= 0 || bIsDashing)
+	{
+		return;
+	}
+
+	bIsDashing = true;
+	DashCharges--;
+	DashDirection = GetActorForwardVector();
+	FVector DashVelocity = DashDirection * (DashDistance / DashDuration);
+	LaunchCharacter(DashVelocity, true, true);
+	GetWorld()->GetTimerManager().SetTimer(DashTimerHandle, this, &ATS_Avatar::StopDashing, DashDuration, false);
+
+	if (DashCharges == 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ATS_Avatar::EnableDash, 5.0f, false);
+	}
+}
+
+void ATS_Avatar::StopDashing()
+{
+	bIsDashing = false;
+	GetCharacterMovement()->StopMovementImmediately();
+}
+
+void ATS_Avatar::EnableDash()
+{
+	DashCharges++;
+	if (DashCharges < MaxDashCharges)
+	{
+		GetWorld()->GetTimerManager().SetTimer(DashCooldownHandle, this, &ATS_Avatar::EnableDash, 5.0f, false);
+	}
+}
+
+void ATS_Avatar::StopShooting()
+{
+	bHoldingShoot = false;
+	GetWorld()->GetTimerManager().ClearTimer(AutoShootHandle);
+}
+
+void ATS_Avatar::IncreaseMaxHealth()
+{
+	if (MaxHealth < 200 && Coin >= 10)
+	{
+		Coin -= 10;
+		MaxHealth += 10.0f;
+		Health += 10.0f;
+	}
+	else 
+	{
+		bHealthUpgradeMax = true;
+	}
+}
+
+void ATS_Avatar::IncreaseMovementSpeed()
+{
+	if (GetCharacterMovement()->MaxWalkSpeed < 800 && Coin >= 10) 
+	{
+		Coin -= 10;
+		GetCharacterMovement()->MaxWalkSpeed += 20.0f;
+	}
+}
+
+void ATS_Avatar::GainDualWield()
+{
+	if (GunType && !bDualWieldUnlocked && Coin >= 50)
+	{
+		SecondaryGun = GetWorld()->SpawnActor<ATS_Gun>(GunType);
+
+		if (SecondaryGun)
+		{
+			SecondaryGun->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("SecondaryGunSocket"));
+			SecondaryGun->SetOwner(this);
+			bDualWieldUnlocked = true;
+			Coin -= 50;
+		}
+	}
+}
+
+void ATS_Avatar::GainDoubleDash()
+{
+	if (!bDoubleDashUnlocked && Coin >= 50)
+	{
+		DashCharges++;
+		MaxDashCharges++;
+		bDoubleDashUnlocked = true;
+		Coin -= 50;
+	}
+}
+
+void ATS_Avatar::GainAutoGuns()
+{
+	if (!bAutoGunsUnlocked && Coin >= 50)
+	{
+		bAutoGunsUnlocked = true;
+		Coin -= 50;
+	}
 }

@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TS_Avatar.h"
+#include "TS_Boss.h"
 
 ATS_Enemy::ATS_Enemy()
 {
@@ -32,9 +33,18 @@ void ATS_Enemy::Tick(float DeltaTime)
 	// Calculate direction to the player
 	FVector Direction = (PlayerLocation - EnemyLocation).GetSafeNormal();
 
+	// Preserve the current Z position
+	Direction.Z = 0.0f;
+	Direction.Normalize();
+
 	// Update the enemy's location
 	FVector NewLocation = EnemyLocation + Direction * WalkSpeed * DeltaTime;
+	NewLocation.Z = EnemyLocation.Z; // Keep the original Z position
 	SetActorLocation(NewLocation);
+
+	// Rotate the enemy to face the moving direction
+	FRotator NewRotation = Direction.Rotation();
+	SetActorRotation(NewRotation);
 }
 
 void ATS_Enemy::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -52,7 +62,26 @@ void ATS_Enemy::TakeDamage()
 
 	if (Health <= 0)
 	{
+		SpawnLootOnDeath();
+
+		if (IsA(ATS_Boss::StaticClass()))
+		{
+			APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+			ATS_Avatar* Avatar = Cast<ATS_Avatar>(PlayerPawn);
+			Avatar->Win();
+		}
+
 		Destroy();
+	
+	}
+}
+
+void ATS_Enemy::SpawnLootOnDeath()
+{
+	int LootDropRatio = FMath::RandRange(1, 5);
+	if (LootDropRatio == 5)
+	{
+		GetWorld()->SpawnActor<ATS_Lootbox>(LootboxReference, GetActorLocation(), GetActorRotation());
 	}
 }
 

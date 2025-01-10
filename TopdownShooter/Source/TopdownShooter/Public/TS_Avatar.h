@@ -34,11 +34,39 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
 	ATS_Gun* EquippedGun;
 
+	FTimerHandle InvincibilityTimerHandle;
+	UPROPERTY()
+	bool bIsInvincible;
+
 	UFUNCTION()
 	void TakeDamage();
 
+	UFUNCTION()
+	void ResetInvincibility();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void Lose();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Win();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OpenShop();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int DashCharges = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanShoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int Coin;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bHealthUpgradeMax;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character")
+	ATS_Gun* SecondaryGun;
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -46,7 +74,42 @@ public:
 
 private:
 
+	bool bIsDashing; 
+	FVector DashDirection; 
+	float DashDistance;
+	float DashDuration;
+	int MaxDashCharges = 1;
+	FTimerHandle DashTimerHandle;
+	FTimerHandle DashCooldownHandle;
+	FTimerHandle AutoShootHandle;
+
 	void MoveForward(float value);
 	void MoveRight(float value);
 	void Shoot();
+	void Dash();
+	void StopDashing();
+	void EnableDash();
+	void StopShooting();
+
+	// SHOP
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseMaxHealth();
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseMovementSpeed();
+
+	UFUNCTION(BlueprintCallable)
+	void GainDualWield();
+
+	UFUNCTION(BlueprintCallable)
+	void GainDoubleDash();
+
+	UFUNCTION(BlueprintCallable)
+	void GainAutoGuns();
+
+	bool bDualWieldUnlocked;
+	bool bDoubleDashUnlocked;
+	bool bAutoGunsUnlocked;
+	bool bHoldingShoot;
 };

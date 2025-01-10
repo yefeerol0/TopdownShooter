@@ -14,15 +14,12 @@ ATS_EnemySpawner::ATS_EnemySpawner()
 
 void ATS_EnemySpawner::SpawnEnemyUnit()
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Green, FString::Printf(TEXT("Spawned!")));
 	GetWorld()->SpawnActor<ATS_Enemy>(EnemyReference, GetActorLocation(), GetActorRotation());
 	GWorld->GetTimerManager().SetTimer(SpawnTimerHandle, this, &ATS_EnemySpawner::TriggerSpawn, 1.0f, false);
 }
 
 void ATS_EnemySpawner::TriggerSpawn()
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Green, FString::Printf(TEXT("Counter starts!")));
-
 	uint8 LevelIndex = static_cast<uint8>(SpawnerLevel);
 	SpawnRange = FMath::RandRange(10.0f - LevelIndex, 15.0f - LevelIndex);
 	GWorld->GetTimerManager().SetTimer(SpawnUnitHandle, this, &ATS_EnemySpawner::SpawnEnemyUnit, SpawnRange, false);
@@ -30,7 +27,6 @@ void ATS_EnemySpawner::TriggerSpawn()
 
 void ATS_EnemySpawner::SpawnerEvolve()
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Green, FString::Printf(TEXT("Evolved!")));
 	uint8 CurrentLevel = static_cast<uint8>(SpawnerLevel);
 	uint8 MaxLevel = static_cast<uint8>(ESpawnerLevel::LEVEL_5);
 

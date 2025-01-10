@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TS_BaseCharacter.h"
+#include "TS_Lootbox.h"
 #include "Components/SphereComponent.h"
 #include "TS_Enemy.generated.h"
 
@@ -20,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	USphereComponent* CollisionSphere;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATS_Lootbox> LootboxReference;
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
@@ -34,6 +38,9 @@ public:
 
 	UFUNCTION()
 	void TakeDamage();
+
+	UFUNCTION()
+	void SpawnLootOnDeath();
 
 	UFUNCTION()
 	FVector GetPlayerLocation() const;

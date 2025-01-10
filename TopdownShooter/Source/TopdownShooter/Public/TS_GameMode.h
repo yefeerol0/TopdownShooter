@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TS_Boss.h"
 #include "GameFramework/GameModeBase.h"
 #include "TS_GameMode.generated.h"
 
@@ -19,9 +20,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Timer;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATS_Boss> BossReference;
+
+	UPROPERTY(EditAnywhere)
+	FTransform BossSpawnPoint;
+
 	FTimerHandle CountdownTimerHandle;
+	FTimerHandle BossTimerHandle;
 
 	virtual void BeginPlay() override;
 	void Countdown();
+
+	void BossSpawn();
 	
 };
