@@ -14,10 +14,10 @@ class TOPDOWNSHOOTER_API ATS_BaseCharacter : public ACharacter
 public:
 	ATS_BaseCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Health;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth;
 
 	UPROPERTY(EditAnywhere)

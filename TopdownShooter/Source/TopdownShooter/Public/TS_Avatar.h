@@ -9,6 +9,7 @@
 #include "Sound/SoundCue.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "TS_GameInstance.h"
 #include "TS_Avatar.generated.h"
 
 /**
@@ -76,7 +77,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanShoot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int Coin;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

@@ -6,9 +6,11 @@
 
 ATS_Avatar::ATS_Avatar()
 {
+
 	Health = 100.0f;
 	MaxHealth = 100.0f;
-	Coin = 20;
+	Coin = 0;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->TargetArmLength = 300.0f;
